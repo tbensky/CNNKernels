@@ -50,7 +50,7 @@ class neural_net(nn.Module):
         x = self.relu(x)
         x = self.fc2(x)
 
-        x = F.normalize(x)
+        #x = F.normalize(x)
         return x
 
     def get_conv_layer_count(self):
@@ -136,6 +136,7 @@ ann.to(device)
 #plan: try lr between 1.5 and 15
 
 #Seq01: first working one: lr=0.005, momentum=1.0, dropout=0.25, normalize output, K=20, conv_layer=50, CrossEntropyLoss
+
 
 optimizer = optim.SGD(ann.parameters(),lr=1.5,momentum=1.0)
 
