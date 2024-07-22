@@ -102,6 +102,25 @@ def find_speed():
         device = torch.device("mps")
     return device
 
+def plot_kernels(file):
+    #https://stackoverflow.com/questions/55594969/how-to-visualise-filters-in-a-cnn-with-pytorch
+    #kernels = ann.conv1.cpu().weight.detach().clone()   
+    #print(ann.state_dict)
+    #exit()
+    kernels = ann.state_dict()['conv1.weight']
+    kernels = kernels.cpu()
+    # kernels = ann.conv1.weight.detach().clone()    
+    kernels = kernels - kernels.min()
+    kernels = kernels / kernels.max()
+    filter_img =utils.make_grid(kernels, nrow = 10)
+    # change ordering since matplotlib requires images to 
+    # # be (H, W, C)
+    plt.imshow(filter_img.permute(1, 2, 0))
+    #plt.savefig(f"Plots/conv_{img_count:05d}.png",dpi=300)
+    plt.savefig(file,dpi=300)
+    plt.close()
+
+
 device = find_speed()
 print(device)
 ann = neural_net()
@@ -148,6 +167,10 @@ img_count = 0
 loss_track = {"epoch": [], "loss": []}
 es = time.time()
 
+#grab random first kernels
+plot_kernels(f"Plots/conv_{img_count:05d}.png")
+img_count += 1
+
 while True:
     loss_total = 0.0
 
@@ -171,30 +194,14 @@ while True:
     loss_track["epoch"].append(epoch)
     loss_track["loss"].append(loss_total)
     
-    if epoch % 5 == 0:
+    if epoch % 1 == 0:
         ee = time.time()
         print(f"epoch={epoch},loss={loss_total}, correct={correct}, time={ee-es} sec")
         es = ee
-    
-        plt.tight_layout()
-    
-        #https://stackoverflow.com/questions/55594969/how-to-visualise-filters-in-a-cnn-with-pytorch
-        #kernels = ann.conv1.cpu().weight.detach().clone()   
-        #print(ann.state_dict)
-        #exit()
-        kernels = ann.state_dict()['conv1.weight']
-        kernels = kernels.cpu()
-        # kernels = ann.conv1.weight.detach().clone()    
-        kernels = kernels - kernels.min()
-        kernels = kernels / kernels.max()
-        filter_img =utils.make_grid(kernels, nrow = 10)
-        # change ordering since matplotlib requires images to 
-        # # be (H, W, C)
-        plt.imshow(filter_img.permute(1, 2, 0))
-        plt.savefig(f"Plots/conv_{img_count:05d}.png",dpi=300)
-        img_count += 1
-        plt.close()
 
+        plot_kernels(f"Plots/conv_{img_count:05d}.png")
+        img_count += 1
+    
         plt.plot(loss_track['epoch'],loss_track['loss'])
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
@@ -206,9 +213,6 @@ while True:
             f.write("epoch,loss\n")
             for (epoch,loss) in zip(loss_track['epoch'],loss_track['loss']):
                 f.write(f"{epoch},{loss}\n")
-
-    
-        
 
     epoch += 1
 

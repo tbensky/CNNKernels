@@ -1,5 +1,6 @@
 # Interpretability of convolutional neural networks via kernel visualizations
 
-The purpose of this work is to do an exercise in the intepretability of a convolutional neural network.
+The purpose of this work is to do an exercise in the intepretability of a convolutional neural network, by inspecting the evolutions of the kernels during training.
+
 
  
