@@ -138,7 +138,7 @@ ann.to(device)
 #Seq01: first working one: lr=0.005, momentum=1.0, dropout=0.25, normalize output, K=20, conv_layer=50, CrossEntropyLoss
 
 
-optimizer = optim.SGD(ann.parameters(),lr=1.5,momentum=1.0)
+optimizer = optim.SGD(ann.parameters(),lr=0.001,momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections

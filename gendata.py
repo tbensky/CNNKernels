@@ -13,7 +13,7 @@ def cls():
             screen[row*WIDTH+col] = '0'
 
 def clip_data(x):
-    if x == '1':
+    if x == 1:
         return 0.8
     return 0.1
 
@@ -43,8 +43,8 @@ def dump_pair(output):
     for i in range(SIZE-1):
         print(f"{clip_data(screen[i])},",end="")
     print(f"{clip_data(screen[i])}",end="")
-    output = [clip_data(x) for x in output]
-    print(f"],{output}",end="")
+    output1 = [clip_data(x) for x in output]
+    print(f"],{output1}",end="")
     print("]",end="")
 
 
