@@ -15,7 +15,7 @@ import time
 class neural_net(nn.Module):
     def __init__(self):
         super(neural_net, self).__init__()
-        self.conv_layer_count = 50
+        self.conv_layer_count = 10
         self.K = 20
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=self.conv_layer_count, kernel_size=self.K, stride=1, padding=0)
@@ -23,10 +23,11 @@ class neural_net(nn.Module):
         self.mp1 =  nn.MaxPool2d(2)
         self.conv2 = nn.Conv2d(in_channels=self.conv_layer_count, out_channels=1, kernel_size=self.K)
         self.act = nn.Tanh()
-        self.dropout1 = nn.Dropout(0.25)
+        self.dropout1 = nn.Dropout(0.5)
         self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(31*31, 128)
-        self.fc2 = nn.Linear(128, 3)
+        self.fc1 = nn.Linear(31*31, 4096)
+        self.fc2 = nn.Linear(4096, 1024)
+        self.fc3 = nn.Linear(1024, 3)
 
 
     def forward(self, x):
@@ -36,7 +37,7 @@ class neural_net(nn.Module):
         x = self.conv2(x)
         x = self.relu(x)
         x = self.mp1(x)
-        x = self.dropout1(x)
+        #x = self.dropout1(x)
     
         #K=10, size=18x18
         #K=25, size=7x7
@@ -46,9 +47,14 @@ class neural_net(nn.Module):
        
         x = torch.flatten(x, 1)
         x = self.fc1(x)
-   
         x = self.relu(x)
+
         x = self.fc2(x)
+        x = self.act(x)
+
+        x = self.fc3(x)
+        x = self.act(x)
+
 
         #x = F.normalize(x)
         return x
@@ -138,21 +144,26 @@ ann.to(device)
 #Seq01: first working one: lr=0.005, momentum=1.0, dropout=0.25, normalize output, K=20, conv_layer=50, CrossEntropyLoss
 
 
-optimizer = optim.SGD(ann.parameters(),lr=0.001,momentum=0.1)
+#22Jul: lr=0.5, momentum=0 gives some kernel patterns
+#having variable amplitudes of pulses helps
+optimizer = optim.SGD(ann.parameters(),lr=1e-1,momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections
 #loss_fn = nn.CrossEntropyLoss() 
 
 #MSELoss reveals straight sections
-loss_fn = nn.MSELoss()
-#loss_fn = nn.BCEWithLogitsLoss()
+#loss_fn = nn.MSELoss()
+#loss_fn = nn.BCEWithLogitsLoss()  #this one is interesting
+loss_fn = nn.L1Loss()
+#loss_fn = nn.NLLLoss()
 
 #https://stackoverflow.com/questions/41924453/pytorch-how-to-use-dataloaders-for-custom-datasets
 
 size = 100
 train = CustomData("pairs.json")
-train_loader = DataLoader(train, batch_size=100, shuffle=True)
+print(f"data set length={train.len()}")
+train_loader = DataLoader(train, batch_size=10, shuffle=True)
 
 # for i in range(train.len()):
 #     print(i)
@@ -165,7 +176,7 @@ os.system("rm loss.png")
 
 epoch = 0
 img_count = 0
-loss_track = {"epoch": [], "loss": []}
+loss_track = {"epoch": [], "loss": [], "correct": []}
 es = time.time()
 
 #grab random first kernels
@@ -176,6 +187,8 @@ while True:
     loss_total = 0.0
 
     correct = 0
+    davg = 0
+    NN=0
     for data,target in train_loader:
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -188,25 +201,47 @@ while True:
 
         loss_total += loss.item()
 
-        correct_list = (torch.abs(out - target) < 0.1)
-        if correct_list == [True] * len(target):
-            correct += 1
+        dd = 0
+        for i in range(len(out)):
+            c = 0
+            for j in range(len(out[i])):
+                d = torch.abs(out[i][j] - target[i][j])
+                if d < 0.1:
+                    c += 1
+                dd += d
+                davg += d
+                NN += 1
+            dd /= 3
+            #if dd < 0.1:
+            #    print(out[i],target[i])
+            if c == 3:
+                correct += 1
+
+        # correct_list = (torch.abs(out - target) < 0.1)
+        # if correct_list == [True] * len(target):
+        #     correct += 1
     
+    davg /= NN
     loss_track["epoch"].append(epoch)
     loss_track["loss"].append(loss_total)
+    loss_track["correct"].append(correct)
     
     if epoch % 1 == 0:
         ee = time.time()
-        print(f"epoch={epoch},loss={loss_total}, correct={correct}, time={ee-es} sec")
+        print(f"epoch={epoch},loss={loss_total}, correct={correct}, time={ee-es} sec, davg={davg}")
         es = ee
 
         plot_kernels(f"Plots/conv_{img_count:05d}.png")
         img_count += 1
     
+        plt.subplot(2,1,1)
         plt.plot(loss_track['epoch'],loss_track['loss'])
-        plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.title("Convolutional Network Training Loss")
+        plt.subplot(2,1,2)
+        plt.plot(loss_track['epoch'],loss_track['correct'])
+        plt.ylabel("Correct Count")
+        plt.xlabel("Epoch")
         plt.savefig("loss.png",dpi=300)
         plt.close()
 

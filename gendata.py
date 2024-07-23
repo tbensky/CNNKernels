@@ -10,7 +10,7 @@ screen = ['0'] * SIZE
 def cls():
     for row in range(HEIGHT):
         for col in range(WIDTH):
-            screen[row*WIDTH+col] = '0'
+            screen[row*WIDTH+col] = 0
 
 def clip_data(x):
     if x == 1:
@@ -53,7 +53,7 @@ def gauss(A,x0,sigma):
     x = -HEIGHT/2
     while x < HEIGHT/2:
         y = int(A*math.exp(-((x-x0)**2)/(2*math.pi*sigma**2)))
-        plotbig(x,y,'1')
+        plotbig(x,y,1)
         x += 0.1
 
 def square(A,x0,width,offset):
@@ -63,12 +63,12 @@ def square(A,x0,width,offset):
             y = int(offset)
         else:
             y = int(offset + A)
-        plotbig(x,y,'1')
+        plotbig(x,y,1)
         x += 1
 
     for y in range(int(offset),int(A + offset)+1):
-        plotbig(x0,y,'1')
-        plotbig(x0+width,y,'1')
+        plotbig(x0,y,1)
+        plotbig(x0+width,y,1)
     
 def triangle(A,x0,width,offset):
     x = -WIDTH/2
@@ -78,7 +78,7 @@ def triangle(A,x0,width,offset):
         if x % int(width) == 0:
             m *= -1
         y += m
-        plotbig(x,y,'1')
+        plotbig(x,y,1)
         x += 1
     
 
@@ -86,7 +86,7 @@ A = 20 #random.uniform(5,20)
 x0 = 0 #random.uniform(-30,30)
 sd = random.uniform(1,20)
 width = random.uniform(2,25)
-offset = 0 # random.uniform(-30,30)
+offset = random.uniform(-30,30) #0
 
 #square(A,x0,width,offset)
 
@@ -97,14 +97,14 @@ stats = {"gauss": 0, "square": 0, "triangle": 0}
 print("[") # open json
 
 
-N = 100
+N = 1000
 for i in range(0,N):
     cls()
-    A = 20 #random.uniform(5,50) #20
+    A = random.uniform(5,50) #20
     x0 = random.uniform(-30,30)
     sd = random.uniform(1,10)
     width = random.uniform(2,15)
-    offset = 0 # random.uniform(-30,30)
+    offset = random.uniform(-30,30) #0
 
     n = random.randint(0,2)
 
