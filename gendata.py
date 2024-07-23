@@ -49,10 +49,10 @@ def dump_pair(output):
 
 
 
-def gauss(A,x0,sigma):
+def gauss(A,x0,sigma,offset):
     x = -HEIGHT/2
     while x < HEIGHT/2:
-        y = int(A*math.exp(-((x-x0)**2)/(2*math.pi*sigma**2)))
+        y = int(offset) + int(A*math.exp(-((x-x0)**2)/(2*math.pi*sigma**2)))
         plotbig(x,y,1)
         x += 0.1
 
@@ -82,11 +82,11 @@ def triangle(A,x0,width,offset):
         x += 1
     
 
-A = 20 #random.uniform(5,20)
-x0 = 0 #random.uniform(-30,30)
+A = random.uniform(5,20)
+x0 = random.uniform(-30,30)
 sd = random.uniform(1,20)
 width = random.uniform(2,25)
-offset = random.uniform(-30,30) #0
+offset = random.uniform(-50,50-A) #0
 
 #square(A,x0,width,offset)
 
@@ -109,7 +109,7 @@ for i in range(0,N):
     n = random.randint(0,2)
 
     if n == 0:
-        gauss(A,x0,sd)
+        gauss(A,x0,sd,offset)
         output = [0,0,1]
         stats['gauss'] += 1
     if n == 1:

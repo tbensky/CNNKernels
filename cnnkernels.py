@@ -146,7 +146,7 @@ ann.to(device)
 
 #22Jul: lr=0.5, momentum=0 gives some kernel patterns
 #having variable amplitudes of pulses helps
-optimizer = optim.SGD(ann.parameters(),lr=1e-1,momentum=0.1)
+optimizer = optim.SGD(ann.parameters(),lr=5e-2,momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections
@@ -162,8 +162,9 @@ loss_fn = nn.L1Loss()
 
 size = 100
 train = CustomData("pairs.json")
-print(f"data set length={train.len()}")
-train_loader = DataLoader(train, batch_size=10, shuffle=True)
+batch_size = int(train.len()/10)
+print(f"data set length={train.len()}, batch_size={batch_size}")
+train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
 
 # for i in range(train.len()):
 #     print(i)
