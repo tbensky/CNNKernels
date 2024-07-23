@@ -23,8 +23,8 @@ class neural_net(nn.Module):
         self.mp1 =  nn.MaxPool2d(2)
         self.conv2 = nn.Conv2d(in_channels=self.conv_layer_count, out_channels=1, kernel_size=self.K)
         self.act = nn.Tanh()
-        self.dropout1 = nn.Dropout(0.5)
-        self.dropout2 = nn.Dropout(0.5)
+        self.dropout1 = nn.Dropout(0.01)
+        self.dropout2 = nn.Dropout(0.01)
         self.fc1 = nn.Linear(31*31, 4096)
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
@@ -33,31 +33,30 @@ class neural_net(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.relu(x)
-        
+
         x = self.conv2(x)
         x = self.relu(x)
         x = self.mp1(x)
-        #x = self.dropout1(x)
-    
-        #K=10, size=18x18
-        #K=25, size=7x7
-        #K=20, 10x10
+
         #print(x.size()) 
         #exit()
-       
+
+        x = self.dropout1(x)
+
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = self.relu(x)
 
         x = self.fc2(x)
+        x = self.dropout2(x)
         x = self.act(x)
 
         x = self.fc3(x)
         x = self.act(x)
 
-
-        #x = F.normalize(x)
         return x
+
+
 
     def get_conv_layer_count(self):
         return self.conv_layer_count
@@ -163,7 +162,7 @@ loss_fn = nn.L1Loss()
 size = 100
 train = CustomData("pairs.json")
 print(f"data set length={train.len()}")
-train_loader = DataLoader(train, batch_size=10, shuffle=True)
+train_loader = DataLoader(train, batch_size=100, shuffle=True)
 
 # for i in range(train.len()):
 #     print(i)

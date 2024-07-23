@@ -32,7 +32,9 @@ We chose these because:
 
  # PyTorch and the neural network
 
- Since this job is very similar to building a CNN to recognize the MNIST digits, we used that as a base for the structure of our model.  Here is it:
+ Since this job is very similar to building a CNN to recognize the MNIST digits, we used that as a base for the structure of our model. We studies [this code](https://github.com/pytorch/examples/blob/main/mnist/main.py) a lot.
+ 
+Here's what we used:
 
  ```python
  class neural_net(nn.Module):
@@ -64,38 +66,33 @@ We chose these because:
         #print(x.size()) 
         #exit()
        
+        x = dropout1(x)
+
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = self.relu(x)
 
         x = self.fc2(x)
+        x = dropout2(x)
         x = self.act(x)
 
         x = self.fc3(x)
         x = self.act(x)
 
-
-        #x = F.normalize(x)
         return x
 ```
 
 We're bascially coming in with a CNN having 5 kernels, each with a 20x20 size.  We activate it with a ReLU, then go on into another CNN layer+ReLU, the do some max pooling.  We then flatten it and head into 3 linear, dense, fully connected layers.  Nothing too special here.
 
 Note:
- * We played around a lot with the size and number of kernels.  The 20x20 size seemed like a good
 
+ * Our images are 100x100 with 1-bit of depth (simple pixel on or off images). They are each to be mapped to a 3-bit binary value, as: 001=square pulse, 010=Gaussian pulse and 100=triangular pulses.
 
+ * We played around a lot with the size and number of kernels.  The 20x20 size seemed like a good size for our 100x100 images with a stride of 1. ("seem like a good size"=we thought a 20x20 square "sliding over" our images would capture the features of our clunky waveform images.)
 
- self.relu = nn.ReLU()
-        self.mp1 =  nn.MaxPool2d(2)
-        self.conv2 = nn.Conv2d(in_channels=self.conv_layer_count, out_channels=1, kernel_size=self.K)
-        self.act = nn.Tanh()
-        self.dropout1 = nn.Dropout(0.5)
-        self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(31*31, 4096)
-        self.fc2 = nn.Linear(4096, 1024)
-        self.fc3 = nn.Linear(1024, 3)
+ * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, not many kernels are needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see.
 
+ * The size of the fully connected (fc) layers was a big variable too. After working with PiNNS (see our report [here](https://github.com/tbensky/PiNN_Projectile)), we realized that these networks need 'expressivity', which wide layers seem to supply. So, we went for a 4096 into a 1024 into a 3 for the eventual output.
 
 
  
