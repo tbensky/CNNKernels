@@ -2,9 +2,14 @@
 
 The purpose of this work is to do an exercise in the intepretability of a convolutional neural network, by inspecting the evolution of the kernels during training.
 
-The idea for this work came from a study like [this one](https://towardsdatascience.com/convolution-neural-network-decryption-e323fd18c33). There are many such studies.  Like them, our goal is to produce images of kernels of a trained CNN, and see how the may relate to the training data set.
+The idea for this work came from a studies like 
 
-In sum, we wanted to present a convolutional neural network (CNN) with some simple images, get it all trained, then visualize the resulting kernels.
+  * [Lee et. al.](https://web.eecs.umich.edu/~honglak/icml09-ConvolutionalDeepBeliefNetworks.pdf), in particular Figs. 2 and 3, and
+  * [Krizhevsky, et. al.](https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), Fig. 3.  
+
+Like them, our goal is to visualize the kernels of a trained CNN, and see how they may relate to the training data set.
+
+In sum: we want to train a convolutional neural network (CNN) with some simple images, then visualize the resulting kernels.
 
 # Our data set
 
@@ -20,7 +25,9 @@ To keep the data set simple, we produced a series of images of simple waveforms 
 ![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_007.jpg)
 ![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_008.jpg)
 
-We choose these because their features are distinct and simple: corners, vertical/horizontal lines, and gradual slopes.
+We chose these because their features are distinct and simple, mostly having corners, vertical/horizontal lines, and gradual slopes. (The waveforms in the entire data set were created to have varying amplitudes, widths, and vertical offsets.)
+
+x
 
 
 
