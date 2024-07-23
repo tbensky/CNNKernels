@@ -15,7 +15,7 @@ import time
 class neural_net(nn.Module):
     def __init__(self):
         super(neural_net, self).__init__()
-        self.conv_layer_count = 10
+        self.conv_layer_count = 5
         self.K = 20
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=self.conv_layer_count, kernel_size=self.K, stride=1, padding=0)
