@@ -97,7 +97,7 @@ stats = {"gauss": 0, "square": 0, "triangle": 0}
 print("[") # open json
 
 
-N = 1000
+N = 10
 for i in range(0,N):
     cls()
     A = random.uniform(5,50) #20

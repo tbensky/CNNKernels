@@ -48,7 +48,7 @@ class neural_net(nn.Module):
         x = self.relu(x)
 
         x = self.fc2(x)
-        x = self.dropout2(x)
+       # x = self.dropout2(x)
         x = self.act(x)
 
         x = self.fc3(x)
@@ -126,6 +126,19 @@ def plot_kernels(file):
     plt.close()
 
 
+def count_correct(out,target):
+    correct = 0
+    for i in range(len(out)):
+        c = 0
+        for j in range(len(out[i])):
+            d = torch.abs(out[i][j] - target[i][j])
+            if d < 0.1:
+                c += 1
+        if c == len(out[i]):
+            correct += 1
+    return correct
+
+
 device = find_speed()
 print(device)
 ann = neural_net()
@@ -145,7 +158,10 @@ ann.to(device)
 
 #22Jul: lr=0.5, momentum=0 gives some kernel patterns
 #having variable amplitudes of pulses helps
-optimizer = optim.SGD(ann.parameters(),lr=5e-2,momentum=0.1)
+
+#24Jul: keep dropout low, like 0.01. lr=0.1, momentum=0, no dropout on fc layers!
+
+optimizer = optim.SGD(ann.parameters(),lr=0.1)#,momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections
@@ -161,18 +177,17 @@ loss_fn = nn.L1Loss()
 
 size = 100
 train = CustomData("pairs.json")
-<<<<<<< HEAD
+test_data = CustomData("test_pairs.json")
 batch_size = int(train.len()/10)
-print(f"data set length={train.len()}, batch_size={batch_size}")
-train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
-=======
-print(f"data set length={train.len()}")
-train_loader = DataLoader(train, batch_size=100, shuffle=True)
->>>>>>> e98db811b5e2eaf298440ba8a9270a2fedf0d2d2
 
-# for i in range(train.len()):
+train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_data,shuffle=True)
+print(f"data set length={train.len()}, batch_size={batch_size}, test data length={test_data.len()}")
+
+
+# for i in range(test_data.len()):
 #     print(i)
-#     train.show(i,f"Pulses/pulse_{i:03d}.jpg")
+#     test_data.show(i,f"Pulses/pulse_{i:03d}.jpg")
 # exit()
 
 os.system("rm Plots/*.png")
@@ -181,7 +196,7 @@ os.system("rm loss.png")
 
 epoch = 0
 img_count = 0
-loss_track = {"epoch": [], "loss": [], "correct": []}
+loss_track = {"epoch": [], "loss": [], "train_correct": [],"test_correct": []}
 es = time.time()
 
 #grab random first kernels
@@ -191,9 +206,7 @@ img_count += 1
 while True:
     loss_total = 0.0
 
-    correct = 0
-    davg = 0
-    NN=0
+    train_correct = 0
     for data,target in train_loader:
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -206,47 +219,42 @@ while True:
 
         loss_total += loss.item()
 
-        dd = 0
-        for i in range(len(out)):
-            c = 0
-            for j in range(len(out[i])):
-                d = torch.abs(out[i][j] - target[i][j])
-                if d < 0.1:
-                    c += 1
-                dd += d
-                davg += d
-                NN += 1
-            dd /= 3
-            #if dd < 0.1:
-            #    print(out[i],target[i])
-            if c == 3:
-                correct += 1
+        train_correct += count_correct(out,target)
 
-        # correct_list = (torch.abs(out - target) < 0.1)
-        # if correct_list == [True] * len(target):
-        #     correct += 1
+    test_correct = 0
+    for data,target in test_loader:
+        data, target = data.to(device), target.to(device)
+        out = ann(data)
+        test_correct += count_correct(out,target)
+
     
-    davg /= NN
     loss_track["epoch"].append(epoch)
     loss_track["loss"].append(loss_total)
-    loss_track["correct"].append(correct)
+    loss_track["train_correct"].append(train_correct)
+    loss_track["test_correct"].append(test_correct)
     
     if epoch % 1 == 0:
         ee = time.time()
-        print(f"epoch={epoch},loss={loss_total}, correct={correct}, time={ee-es} sec, davg={davg}")
+        print(f"epoch={epoch},loss={loss_total}, train_correct={train_correct}, test_correct={test_correct}, time={ee-es} sec")
         es = ee
 
         plot_kernels(f"Plots/conv_{img_count:05d}.png")
         img_count += 1
     
-        plt.subplot(2,1,1)
+        plt.subplot(3,1,1)
         plt.plot(loss_track['epoch'],loss_track['loss'])
         plt.ylabel("Loss")
         plt.title("Convolutional Network Training Loss")
-        plt.subplot(2,1,2)
-        plt.plot(loss_track['epoch'],loss_track['correct'])
-        plt.ylabel("Correct Count")
+
+        plt.subplot(3,1,2)
+        plt.plot(loss_track['epoch'],loss_track['train_correct'])
+        plt.ylabel("Train Correct")
+
+        plt.subplot(3,1,3)
+        plt.plot(loss_track['epoch'],loss_track['test_correct'])
+        plt.ylabel("Test Correct")
         plt.xlabel("Epoch")
+
         plt.savefig("loss.png",dpi=300)
         plt.close()
 
