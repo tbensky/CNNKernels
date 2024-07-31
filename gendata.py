@@ -1,8 +1,9 @@
 import math
 import random
 
-HEIGHT = 100
-WIDTH = 100
+
+HEIGHT = 500
+WIDTH = 500
 SIZE = (HEIGHT*WIDTH)
 
 screen = ['0'] * SIZE
@@ -73,23 +74,31 @@ def square(A,x0,width,offset):
 def triangle(A,x0,width,offset):
     x = -WIDTH/2
     y = offset
-    m = 1.0
+    m = 0.5
     while x < WIDTH/2:
         if x % int(width) == 0:
             m *= -1
-        y += m
+        y += m * x
         plotbig(x,y,1)
         x += 1
-    
 
-A = random.uniform(5,20)
-x0 = random.uniform(-30,30)
-sd = random.uniform(1,20)
-width = random.uniform(2,25)
-offset = random.uniform(-50,50-A) #0
+#f=1..10 seems to work best
+def osc(A,f,offset):
+    x = -WIDTH/2
+    offset = 0
+    while x < WIDTH/2:
+        y = offset - int(A*math.sin(x/20))
+        plotbig(x,y,1)
+        x += 0.1
 
-#square(A,x0,width,offset)
 
+def get_params():
+    A = random.uniform(10,300)
+    x0 = random.uniform(-300,300)
+    sd = random.uniform(1,50)
+    width = random.uniform(2,100)
+    offset = random.uniform(-20,200) #0
+    return A,x0,sd,width,offset
 
 
 stats = {"gauss": 0, "square": 0, "triangle": 0}
@@ -97,15 +106,10 @@ stats = {"gauss": 0, "square": 0, "triangle": 0}
 print("[") # open json
 
 
-N = 10
+N = 100
 for i in range(0,N):
     cls()
-    A = random.uniform(5,50) #20
-    x0 = random.uniform(-30,30)
-    sd = random.uniform(1,10)
-    width = random.uniform(2,15)
-    offset = random.uniform(-30,30) #0
-
+    A,x0,sd,width,offset = get_params()
     n = random.randint(0,2)
 
     if n == 0:
@@ -117,7 +121,8 @@ for i in range(0,N):
         output = [0,1,0]
         stats['square'] += 1
     if n == 2:
-        triangle(A,x0,width,offset)
+        #triangle(A,x0,5*width,offset)
+        osc(A,2,offset)
         output = [1,0,0]
         stats['triangle'] += 1
 

@@ -11,12 +11,14 @@ import os
 import torch.nn.functional as F
 import time
 
+IMAGE_SIZE=500
+
 #https://discuss.pytorch.org/t/error-while-running-cnn-for-grayscale-image/598/2
 class neural_net(nn.Module):
     def __init__(self):
         super(neural_net, self).__init__()
         self.conv_layer_count = 5
-        self.K = 20
+        self.K = 25
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=self.conv_layer_count, kernel_size=self.K, stride=1, padding=0)
         self.relu = nn.ReLU()
@@ -25,7 +27,7 @@ class neural_net(nn.Module):
         self.act = nn.Tanh()
         self.dropout1 = nn.Dropout(0.01)
         self.dropout2 = nn.Dropout(0.01)
-        self.fc1 = nn.Linear(31*31, 4096)
+        self.fc1 = nn.Linear(226*226, 4096)
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
 
@@ -80,7 +82,7 @@ class CustomData(Dataset):
         input = self.pairs[idx][0]
         target = self.pairs[idx][1]
 
-        ip = torch.tensor(input).view(100,100)
+        ip = torch.tensor(input).view(IMAGE_SIZE,IMAGE_SIZE)
 
         #add the channel_count dimension since conv2d wants [channel_count H W]
         ip = ip.unsqueeze(0)
@@ -95,7 +97,7 @@ class CustomData(Dataset):
 
     def show(self,idx,file):
         p = np.array(self.pairs[idx][0])
-        p1 = p.reshape(100,100)
+        p1 = p.reshape(IMAGE_SIZE,IMAGE_SIZE)
         plt.imshow(p1)
         plt.savefig(file,dpi=300)
         plt.close()
@@ -175,7 +177,7 @@ loss_fn = nn.L1Loss()
 
 #https://stackoverflow.com/questions/41924453/pytorch-how-to-use-dataloaders-for-custom-datasets
 
-size = 100
+#size = 100
 train = CustomData("pairs.json")
 test_data = CustomData("test_pairs.json")
 batch_size = int(train.len()/10)
@@ -185,10 +187,10 @@ test_loader = DataLoader(test_data,shuffle=True)
 print(f"data set length={train.len()}, batch_size={batch_size}, test data length={test_data.len()}")
 
 
-# for i in range(test_data.len()):
-#     print(i)
-#     test_data.show(i,f"Pulses/pulse_{i:03d}.jpg")
-# exit()
+for i in range(train.len()):
+    print(i)
+    train.show(i,f"Pulses/pulse_{i:03d}.jpg")
+exit()
 
 os.system("rm Plots/*.png")
 os.system("rm loss.csv")
