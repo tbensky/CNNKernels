@@ -22,8 +22,8 @@ See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Assets/SamplePu
 
 We chose these because:
 
- 1.  Their features are distinct and simple, mostly having corners, vertical/horizontal lines, and gradual slopes. (The waveforms in the entire data all have have varying amplitudes, widths, and vertical offsets.) 
- 1.  They have a bit of data/laboratory flair, since our larger goal is to study if CNNs and kernels can be used by those in the basic sciences to gain insights into their data.
+ 1.  Their features are distinct and simple, mostly having corners, vertical/horizontal lines, and gradual slopes. (The waveforms in the entire data all have have varying amplitudes, widths, and vertical/horizontal offsets.) 
+ 1.  They have a bit of data/laboratory flair, since our larger goal is to study if CNNs and kernels can be used by those in the basic sciences to gain insights into their data. These images could easily be pulled right off of an oscilloscope
 
  # PyTorch and the neural network
 
@@ -81,7 +81,7 @@ Notes:
 
  * Our images are 100x100 with 1-bit of depth (simple pixel on or off images). They are each to be mapped to a 3-bit binary value, as: 001=square pulse, 010=Gaussian pulse and 100=triangular pulses.
 
- * We played around a lot with the size and number of kernels.  The 20x20 size seemed like a good size for our 100x100 images with a stride of 1. ("seem like a good size"=we thought a 20x20 square "sliding over" our images would capture the features of our clunky waveform images.)
+ * We played around a lot with the size and number of kernels.  The 25x25 size seemed like a good size for our 100x100 images with a stride of 1. ("seem like a good size"=we thought a 25x25 square "sliding over" our images would capture the features of our clunky waveform images.)
 
  * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, not many kernels are needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see.
 
@@ -89,9 +89,17 @@ Notes:
 
  * L1Loss was the only loss function that seemed to work consistently, but we noticed this is not the most popular one to use with CNNs.
 
+ * I found the network very finicky to train, but this seems to work: L1Loss, Tanh activation on the fully connected layers, lr=0.1, momentum=0.0, batch_size=1,000 (on the 10,000 input images), and very selective DropOut.
+
+* My network is huge (200M parameters).
+
+ 
+
 
 # References
 
  * [HOW CONVOLUTIONAL NEURAL NETWORKS SEE THE WORLD — A SURVEY OF CONVOLUTIONAL NEURAL NETWORK VISUALIZATION METHODS, by Qin et. al.](https://arxiv.org/pdf/1804.11191)
+
+ * [Kernels on a trained CNN seem random](https://ai.stackexchange.com/questions/46180/kernels-on-a-trained-cnn-seem-random)
 
  
