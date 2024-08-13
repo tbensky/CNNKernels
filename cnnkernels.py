@@ -140,11 +140,17 @@ def count_correct(out,target):
             correct += 1
     return correct
 
+def count_params(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 device = find_speed()
 print(device)
 ann = neural_net()
 ann.to(device)
+
+
+print(count_params(ann))
+exit()
 
 
 
@@ -187,10 +193,10 @@ test_loader = DataLoader(test_data,shuffle=True)
 print(f"data set length={train.len()}, batch_size={batch_size}, test data length={test_data.len()}")
 
 
-for i in range(train.len()):
-    print(i)
-    train.show(i,f"Pulses/pulse_{i:03d}.jpg")
-exit()
+# for i in range(train.len()):
+#     print(i)
+#     train.show(i,f"Pulses/pulse_{i:03d}.jpg")
+# exit()
 
 os.system("rm Plots/*.png")
 os.system("rm loss.csv")
