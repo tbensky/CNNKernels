@@ -18,7 +18,7 @@ To hopefully keep the kernel visualizations simple, we produced a series of 1x10
 
 ![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/pulse_montage01.png)
 
-See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Pulses) folder for 100 such images.
+See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Assets/SamplePulses/Pulses) folder for 100 such images.
 
 We chose these because:
 
