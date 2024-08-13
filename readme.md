@@ -13,17 +13,11 @@ In sum: we want to train a convolutional neural network (CNN) with some simple i
 
 # Our data set
 
-To hopefully keep the kernel visualizations simple, we produced a series of 1x100x100 images of basic waveforms one might encounter in an electroics lab: square, triangle, and gaussian waveforms.  Here are a few:
+To hopefully keep the kernel visualizations simple, we produced a series of 1x100x100 images of basic waveforms one might encounter in an electroics lab: square, sinusoid, and gaussian waveforms.  Here are a few:
 
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_000.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_001.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_002.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_003.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_004.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_005.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_006.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_007.jpg)
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_008.jpg)
+![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/Pulses/pulse_montage.png)
+
+See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Pulses) folder for 100 such images.
 
 We chose these because:
 
