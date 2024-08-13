@@ -16,7 +16,7 @@ In sum: we want to train a convolutional neural network (CNN) with some simple i
 To hopefully keep the kernel visualizations simple, we produced a series of 1x100x100 images of basic waveforms one might encounter in an electroics lab: square, sinusoid, and gaussian waveforms.  Here are a few:
 
 
-![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/pulse_montage.png)
+![alt text](https://github.com/tbensky/CNNKernels/blob/main/Assets/pulse_montage01.png)
 
 See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Pulses) folder for 100 such images.
 
