@@ -141,7 +141,7 @@ Here are some results showing what the kernels ended up converging too for a few
 
 # References
 
- * [How convolutional neural networks see the works...](https://arxiv.org/pdf/1804.11191), by Qin et. al.
+ * [How convolutional neural networks see the world...](https://arxiv.org/pdf/1804.11191), by Qin et. al.
 
  * A question I posed to ai.stackexchange.com got some nice feedback: [Kernels on a trained CNN seem random](https://ai.stackexchange.com/questions/46180/kernels-on-a-trained-cnn-seem-random)
 
