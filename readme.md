@@ -106,7 +106,7 @@ the network can recognize.
 
 Here's another loss profile:
 
-![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss02.png)
 
  
 
