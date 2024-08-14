@@ -93,14 +93,13 @@ We're bascially coming in with a CNN having 5 kernels, each 25x25 in size.  We a
 
  * We found the network very finicky to train, but this seems to work: L1-loss, tanh activation on the fully connected layers, lr=0.1, momentum=0.0, batch_size=1,000 (on the 10,000 input images), and very minor DropOut.
 
-* The network is huge (200M parameters). We like using this function to count the parameters
+* The network is huge (200M parameters). We like using this function (from  [here](https://stackoverflow.com/questions/49201236/check-the-total-number-of-parameters-in-a-pytorch-model)) to count the parameters
 
 ```python
 def count_params(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 ```
 
-as seen [here](https://stackoverflow.com/questions/49201236/check-the-total-number-of-parameters-in-a-pytorch-model).
 
 
 # Loss Profile
