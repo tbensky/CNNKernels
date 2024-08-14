@@ -22,12 +22,12 @@ See the [Pulses](https://github.com/tbensky/CNNKernels/tree/main/Assets/SamplePu
 
 We chose these because:
 
- 1.  Their features are distinct and simple, mostly having corners, vertical/horizontal lines, and gradual slopes. (The waveforms in the entire data all have have varying amplitudes, widths, and vertical/horizontal offsets.) 
- 1.  They have a bit of data/laboratory flair, since our larger goal is to study if CNNs and kernels can be used by those in the basic sciences to gain insights into their data. These images could easily be pulled right off of an oscilloscope
+ 1.  Their features are distinct and simple, mostly having corners, vertical/horizontal lines, and gradual slopes. (The waveforms in the trainig data each have varying amplitudes, widths, and vertical/horizontal offsets.) 
+ 1.  They have a bit of data/laboratory flair, since our larger goal is to study if CNNs and kernels can be used by those in the basic sciences to gain insights into their data. These images could easily be pulled right off of an oscilloscope.
 
- # PyTorch and the neural network
+ # PyTorch and the neural network structure
 
- Since this job is very similar to building a CNN to recognize the MNIST digits, we used that as a base for the structure of our model. We studied [this code](https://github.com/pytorch/examples/blob/main/mnist/main.py) a lot.
+ Since this job is very similar to building a CNN to recognize the MNIST digits, we used an MNIST classifirt as a base for the structure of the model used here. We studied [this code](https://github.com/pytorch/examples/blob/main/mnist/main.py) extensively.
  
 Here's what we used:
 
@@ -73,34 +73,34 @@ Here's what we used:
         return x
 ```
 
-We're bascially coming in with a CNN having 5 kernels, each with a 25x25 size.  We activate it with a ReLU, then go on into another CNN layer+ReLU, then some max pooling, and some dropout.  We then flatten it and head into 3 linear, dense, fully connected layers with Tanh activation.  Nothing too special here, and we spent a lot of time 'playing' with the structure of the network until it worked consistently.
+We're bascially coming in with a CNN having 5 kernels, each 25x25 in size.  We activate it with a ReLU, then go on into another CNN layer+ReLU, then some max pooling, and some dropout.  We then flatten it all and head into 3 linear, dense, fully connected layers with Tanh activation.  Nothing too special here, and we spent a lot of time 'playing' with the structure of the network until it worked consistently.
 
 
 
 # Notes
 
- * Our images are 100x100 with 1-bit of depth (simple pixel on or off images). They are each to be mapped to a 3-bit binary value, as: 001=square pulse, 010=Gaussian pulse and 100=triangular pulses.
+ * Our images are 100x100 with 1-bit of depth (simple pixel, on or off images). They are each to be mapped to a 3-bit binary value, as: 001=square pulse, 010=Gaussian pulse and 100=sinusoidal pulses.
 
- * We played around a lot with the size and number of kernels.  The 25x25 size seemed like a good size for our 100x100 images with a stride of 1. ("seem like a good size"=we thought a 25x25 square "sliding over" our images would capture the features of our clunky waveform images.)
+ * We played around a lot with the size and number of kernels.  In typical machine learning parlance "the 25x25 size seemed like a good size for our 100x100 images with a stride of 1." ("seem like a good size"=we thought a 25x25 square "sliding over" our images would capture the features of our clunky waveform images.)
 
- * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, not many kernels are needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see. We think our simple waveforms can be trains with random looking kernels, with a large number (20, 50, etc.) of kernels.
+ * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, many kernels are not needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see. We think our simple waveforms can indeed be trained with a large number (20, 30, 50, etc.) of random looking kernels.
 
- * We get best results with 5 kernels.  
+ * We get nice results, with interesting patterns in our kernels when we use 5 kernels.  
 
- * The size of the fully connected (fc) layers was a big variable too. After working with PiNNS (see our report [here](https://github.com/tbensky/PiNN_Projectile)), we realized that these networks need 'expressivity', which wide layers seem to supply. So, we went for a 4096 into a 1024 into a 3 for the eventual output. But wow, what a huge network this is with 200M+ parameters!
+ * The size of the fully connected (fc) layers was a big variable. After working with PiNNS (see our report [here](https://github.com/tbensky/PiNN_Projectile)), we realized that these networks need 'expressivity', which wide layers seem to supply. So, we went for a 4096 into a 1024 into a 3 for the eventual output. But wow, what a huge network this is with 200M+ parameters!
 
- * L1Loss was the only loss function that seemed to work consistently, but we noticed this is not the most popular one to use with CNNs.
+ * L1-Loss was the only loss function that seemed to work consistently, but note that is not the most popular one to use with CNN classifier networks (Cross Entropy seems to be).
 
- * I found the network very finicky to train, but this seems to work: L1Loss, Tanh activation on the fully connected layers, lr=0.1, momentum=0.0, batch_size=1,000 (on the 10,000 input images), and very selective DropOut.
+ * We found the network very finicky to train, but this seems to work: L1-loss, tanh activation on the fully connected layers, lr=0.1, momentum=0.0, batch_size=1,000 (on the 10,000 input images), and very minor DropOut.
 
-* My network is huge (200M parameters). We kind of like using this function to count our parameters
+* The network is huge (200M parameters). We like using this function to count the parameters
 
 ```python
 def count_params(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 ```
 
-as shown [here](https://stackoverflow.com/questions/49201236/check-the-total-number-of-parameters-in-a-pytorch-model).
+as seen [here](https://stackoverflow.com/questions/49201236/check-the-total-number-of-parameters-in-a-pytorch-model).
 
 
 # Loss Profile
@@ -113,9 +113,19 @@ The top graph is the straight up L1-loss. The middle one is the number of traini
 recognize at a given epoch. The lower graph is the number of test samples (not in the training set) that
 the network can recognize (50 used in the runs shown).
 
-Here's another loss profile:
+Here are two more loss profile:
 
 ![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss02.png)
+
+and
+
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss03.png)
+
+Sometimes, the network will appear to train, then drop off into some stuck state, unable to lower the loss function, as shown here
+
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss04.png)
+
+
 
 # Results
 
