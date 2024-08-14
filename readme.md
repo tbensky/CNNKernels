@@ -128,6 +128,6 @@ Here are some results showing what the kernels ended up converging too. The stri
 
  * [HOW CONVOLUTIONAL NEURAL NETWORKS SEE THE WORLD — A SURVEY OF CONVOLUTIONAL NEURAL NETWORK VISUALIZATION METHODS, by Qin et. al.](https://arxiv.org/pdf/1804.11191)
 
- * [Kernels on a trained CNN seem random](https://ai.stackexchange.com/questions/46180/kernels-on-a-trained-cnn-seem-random)
+ * A question I posed to ai.stackexchange.com: [Kernels on a trained CNN seem random](https://ai.stackexchange.com/questions/46180/kernels-on-a-trained-cnn-seem-random)
 
  
