@@ -83,9 +83,11 @@ We're bascially coming in with a CNN having 5 kernels, each with a 25x25 size.  
 
  * We played around a lot with the size and number of kernels.  The 25x25 size seemed like a good size for our 100x100 images with a stride of 1. ("seem like a good size"=we thought a 25x25 square "sliding over" our images would capture the features of our clunky waveform images.)
 
- * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, not many kernels are needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see.
+ * The more kernels we had, the less defined each would be in the end. We tried 100, 50, 20, etc. and think for our simple waveforms, not many kernels are needed. In fact, it may be better to restrict the system more, so each kernel contributes more to the training, bringing out the features we're hoping to see. We think our simple waveforms can be trains with random looking kernels, with a large number (20, 50, etc.) of kernels.
 
- * The size of the fully connected (fc) layers was a big variable too. After working with PiNNS (see our report [here](https://github.com/tbensky/PiNN_Projectile)), we realized that these networks need 'expressivity', which wide layers seem to supply. So, we went for a 4096 into a 1024 into a 3 for the eventual output.
+ * We get best results with 5 kernels.  
+
+ * The size of the fully connected (fc) layers was a big variable too. After working with PiNNS (see our report [here](https://github.com/tbensky/PiNN_Projectile)), we realized that these networks need 'expressivity', which wide layers seem to supply. So, we went for a 4096 into a 1024 into a 3 for the eventual output. But wow, what a huge network this is with 200M+ parameters!
 
  * L1Loss was the only loss function that seemed to work consistently, but we noticed this is not the most popular one to use with CNNs.
 
