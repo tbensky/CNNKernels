@@ -132,8 +132,7 @@ Recall the goal here is to see what patterns the kernels may present for the con
 
 [![emeging kernels](https://img.youtube.com/vi/b76dJzyMLw8/0.jpg)](https://www.youtube.com/watch?v=b76dJzyMLw8)
 
-
-Here are some results showing what the kernels ended up converging too. The strips of 4, 5 or 10 were from different runs.
+Here are some results showing what the kernels ended up converging too for a few different training runs.
 
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/Kernels/kernels.png)
 
