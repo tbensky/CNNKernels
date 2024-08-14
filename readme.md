@@ -98,7 +98,7 @@ We're bascially coming in with a CNN having 5 kernels, each with a 25x25 size.  
 
 Typical loss profiles that evolves during training are quite fun to see. Here's one:
 
-[!loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
 
 The top graph is the straight up L1-loss. The middle one is the number of training samples the network is able to
 recognize at a given epoch. The lower graph is the number of test samples (not in the training set) that
@@ -106,7 +106,7 @@ the network can recognize.
 
 Here's another loss profile:
 
-[!loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
 
  
 
