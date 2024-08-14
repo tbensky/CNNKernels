@@ -109,11 +109,17 @@ Typical loss profiles that evolves during training are quite fun to see. Here's 
 
 The top graph is the straight up L1-loss. The middle one is the number of training samples the network is able to
 recognize at a given epoch. The lower graph is the number of test samples (not in the training set) that
-the network can recognize.
+the network can recognize (50 used in the runs shown).
 
 Here's another loss profile:
 
 ![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss02.png)
+
+# Results
+
+Here are some results showing what the kernels ended up converging too. The strips of 4, 5 or 10 were from different runs.
+
+![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/Kernels/kernels.png)
 
  
 
