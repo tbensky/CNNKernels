@@ -104,7 +104,7 @@ def count_params(model):
 
 # Loss Profile
 
-Typical loss profiles that evolves during training are quite fun to see. Here's one:
+Typical loss profiles that evolve during training are quite interesint to see. Here's one:
 
 ![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
 
