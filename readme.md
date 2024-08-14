@@ -77,7 +77,7 @@ We're bascially coming in with a CNN having 5 kernels, each with a 25x25 size.  
 
 
 
-Notes:
+# Notes
 
  * Our images are 100x100 with 1-bit of depth (simple pixel on or off images). They are each to be mapped to a 3-bit binary value, as: 001=square pulse, 010=Gaussian pulse and 100=triangular pulses.
 
@@ -92,6 +92,21 @@ Notes:
  * I found the network very finicky to train, but this seems to work: L1Loss, Tanh activation on the fully connected layers, lr=0.1, momentum=0.0, batch_size=1,000 (on the 10,000 input images), and very selective DropOut.
 
 * My network is huge (200M parameters).
+
+
+# Loss Profile
+
+Typical loss profiles that evolves during training are quite fun to see. Here's one:
+
+[!loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
+
+The top graph is the straight up L1-loss. The middle one is the number of training samples the network is able to
+recognize at a given epoch. The lower graph is the number of test samples (not in the training set) that
+the network can recognize.
+
+Here's another loss profile:
+
+[!loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss01.png)
 
  
 
