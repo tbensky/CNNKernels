@@ -158,6 +158,10 @@ The result looks like this
 
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d.png)
 
+As usual, the kernel size matters.  Here's the same result with a smaller kernel
+
+![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_smaller_kernel.png)
+
 # References
 
  * [How convolutional neural networks see the world...](https://arxiv.org/pdf/1804.11191), by Qin et. al.
