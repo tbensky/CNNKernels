@@ -138,7 +138,9 @@ Here are some results showing what the kernels ended up converging to for a few 
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/Kernels/kernels.png)
 
  
+# Interpretation
 
+Looking at the loss-converged kernels, we see all kinds of interesting features.  Horizontal and vertical lines for sure, and plenty of slopes to the right and left as well. In other words, little bits and pieces of any particular full waveform (square sinusoid, or gaussian), as seen in the training data set.
 
 # References
 
