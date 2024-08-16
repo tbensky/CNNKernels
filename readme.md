@@ -149,7 +149,7 @@ Let's look at it all the way through but creating a feature map from one of the 
 
 using this kernel
 
-![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv01.png)
+<img src=https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv01.png width=20>
 
 
 ## Result
