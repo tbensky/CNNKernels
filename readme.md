@@ -124,6 +124,10 @@ Sometimes, the network will appear to train, then drop off into some stuck state
 
 ![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss04.png)
 
+One more, just for fun
+
+![loss profile](https://github.com/tbensky/CNNKernels/blob/main/Assets/LossProfiles/loss05.png)
+
 
 
 # Results
