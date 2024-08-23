@@ -143,16 +143,9 @@ Here are some results showing what the kernels ended up converging to for a few 
 Looking at the loss-converged kernels, we see all kinds of interesting features.  Horizontal and vertical lines for sure, and plenty of slopes to the right and left as well. In other words, little bits and pieces of any particular full waveform (square sinusoid, or gaussian), as seen in the training data set.
 
 ## Do a convolution
-Let's look at it all the way through by creating a feature map from one of the kernels. Here, we'll do the 2D convolution of this image:
-
-![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/square_pulse.jpg)
-
-using this kernel
+Let's look at it all the way through by creating a feature map from one of the kernels. Here, we'll do the 2D convolution of a square pulse and this kernel:
 
 <img src=https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/kernel.png width=100>
-
-
-## Result
 
 The result looks like this
 
@@ -161,9 +154,6 @@ The result looks like this
 Notice the bright spots at each corner of the pulse.  This indicates the network recognized square pulses by
 needing only an ensemble of brights spots on corners of the pulse.
 
-As usual, the kernel size matters.  Here's the same result with a smaller kernel
-
-![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_smaller_kernel.png)
 
 # References
 
