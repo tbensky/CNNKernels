@@ -147,12 +147,16 @@ Let's look at it all the way through by creating a feature map from one of the k
 
 <img src=https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/kernel.png width=100>
 
-The result looks like this
+The result looks like this (input is top plot, 2d convolution is lower plot):
 
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_result_square.png)
 
 Notice the bright spots at each corner of the pulse.  This indicates the network recognized square pulses by
 needing only an ensemble of brights spots on corners of the pulse.
+
+The same kernel convoled with a sinusoid looks like this:
+
+![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_result_sinusoid.png)
 
 
 # References
