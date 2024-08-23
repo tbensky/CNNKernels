@@ -156,7 +156,10 @@ using this kernel
 
 The result looks like this
 
-![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d.png)
+![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_result_square.png)
+
+Notice the bright spots at each corner of the pulse.  This indicates the network recognized square pulses by
+needing only an ensemble of brights spots on corners of the pulse.
 
 As usual, the kernel size matters.  Here's the same result with a smaller kernel
 
