@@ -135,7 +135,7 @@ Recall the goal here is to see what patterns the kernels may present for the con
 
 Here are some results showing what the kernels ended up converging to for a few different training runs.
 
-![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/Kernels/kernels.png)
+![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMaps/kernel_montage.png)
 
  
 # Interpretation
