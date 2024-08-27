@@ -156,7 +156,7 @@ The result looks like this (input is top plot, 2d convolution is lower plot):
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_result_square.png)
 
 Notice the bright pixels at each corner of the pulse.  This indicates the network recognizes square pulses by
-needing only an ensemble of brights spots on corners of the pulse.  (Note: We anticipate the bright pixels send stronger signals through the network, setting up some kind of numerical pathways to drive the recognition process.)
+needing only an ensemble of brights spots on corners of the pulse.  (Note: We anticipate the bright pixels send stronger signals through the network, setting up some kind of numerical pathway to drive the recognition process.)
 
 The same kernel convolved with a sinusoid looks like this:
 
@@ -168,7 +168,7 @@ Lastly, we look at the Gaussian
 
 ![kernels](https://github.com/tbensky/CNNKernels/blob/main/Assets/FeatureMap/conv2d_result_gauss.png)
 
-The network evidently cannot find enough individual features of the gaussian, so the entire curve looks bright.
+The network evidently cannot find individual features of the gaussian, so the entire curve looks bright.
 
 
 

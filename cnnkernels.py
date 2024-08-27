@@ -10,24 +10,23 @@ from torchvision import utils
 import os
 import torch.nn.functional as F
 import time
-
-IMAGE_SIZE=500
+from datetime import datetime
 
 #https://discuss.pytorch.org/t/error-while-running-cnn-for-grayscale-image/598/2
 class neural_net(nn.Module):
     def __init__(self):
         super(neural_net, self).__init__()
         self.conv_layer_count = 5
-        self.K = 25
+        self.K = 20
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=self.conv_layer_count, kernel_size=self.K, stride=1, padding=0)
         self.relu = nn.ReLU()
         self.mp1 =  nn.MaxPool2d(2)
         self.conv2 = nn.Conv2d(in_channels=self.conv_layer_count, out_channels=1, kernel_size=self.K)
         self.act = nn.Tanh()
-        self.dropout1 = nn.Dropout(0.01)
+        self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.01)
-        self.fc1 = nn.Linear(226*226, 4096)
+        self.fc1 = nn.Linear(31*31, 4096) 
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
 
@@ -43,7 +42,7 @@ class neural_net(nn.Module):
         #print(x.size()) 
         #exit()
 
-        x = self.dropout1(x)
+        #x = self.dropout1(x)
 
         x = torch.flatten(x, 1)
         x = self.fc1(x)
@@ -82,7 +81,7 @@ class CustomData(Dataset):
         input = self.pairs[idx][0]
         target = self.pairs[idx][1]
 
-        ip = torch.tensor(input).view(IMAGE_SIZE,IMAGE_SIZE)
+        ip = torch.tensor(input).view(100,100)
 
         #add the channel_count dimension since conv2d wants [channel_count H W]
         ip = ip.unsqueeze(0)
@@ -97,7 +96,7 @@ class CustomData(Dataset):
 
     def show(self,idx,file):
         p = np.array(self.pairs[idx][0])
-        p1 = p.reshape(IMAGE_SIZE,IMAGE_SIZE)
+        p1 = p.reshape(100,100)
         plt.imshow(p1)
         plt.savefig(file,dpi=300)
         plt.close()
@@ -109,7 +108,7 @@ def find_speed():
         device = torch.device("mps")
     return device
 
-def plot_kernels(file):
+def plot_kernels(file,img_count):
     #https://stackoverflow.com/questions/55594969/how-to-visualise-filters-in-a-cnn-with-pytorch
     #kernels = ann.conv1.cpu().weight.detach().clone()   
     #print(ann.state_dict)
@@ -123,9 +122,13 @@ def plot_kernels(file):
     # change ordering since matplotlib requires images to 
     # # be (H, W, C)
     plt.imshow(filter_img.permute(1, 2, 0))
+    plt.title(f"Epoch {img_count:05d}")
     #plt.savefig(f"Plots/conv_{img_count:05d}.png",dpi=300)
     plt.savefig(file,dpi=300)
     plt.close()
+
+    for (i,k) in enumerate(kernels):
+        torch.save(k,f"Kernels/kernel_{img_count:05d}_{i:02d}.pt")
 
 
 def count_correct(out,target):
@@ -140,17 +143,11 @@ def count_correct(out,target):
             correct += 1
     return correct
 
-def count_params(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 device = find_speed()
 print(device)
 ann = neural_net()
 ann.to(device)
-
-
-print(count_params(ann))
-exit()
 
 
 
@@ -164,12 +161,19 @@ exit()
 #Seq01: first working one: lr=0.005, momentum=1.0, dropout=0.25, normalize output, K=20, conv_layer=50, CrossEntropyLoss
 
 
+#Notes
+
 #22Jul: lr=0.5, momentum=0 gives some kernel patterns
 #having variable amplitudes of pulses helps
 
-#24Jul: keep dropout low, like 0.01. lr=0.1, momentum=0, no dropout on fc layers!
+#24Jul: keep dropout low, like 0.01. lr=0.5, momentum=0, conv_layer=5, no dropout on fc layers!
+#conv_layers=10, lower lor=0.001, dropout=0: no good results. conv_layers too large?
+#upping conv_layers. Sometimes just be patientand let it run
 
-optimizer = optim.SGD(ann.parameters(),lr=0.1)#,momentum=0.1)
+
+#25Jul: conv_layers=10, lr=0.05, momentum=0.0 was converging. No great patters in kernels though.
+
+optimizer = optim.SGD(ann.parameters(),lr=0.05) #momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections
@@ -183,7 +187,7 @@ loss_fn = nn.L1Loss()
 
 #https://stackoverflow.com/questions/41924453/pytorch-how-to-use-dataloaders-for-custom-datasets
 
-#size = 100
+size = 100
 train = CustomData("pairs.json")
 test_data = CustomData("test_pairs.json")
 batch_size = int(train.len()/10)
@@ -193,22 +197,23 @@ test_loader = DataLoader(test_data,shuffle=True)
 print(f"data set length={train.len()}, batch_size={batch_size}, test data length={test_data.len()}")
 
 
-# for i in range(train.len()):
+# for i in range(test_data.len()):
 #     print(i)
-#     train.show(i,f"Pulses/pulse_{i:03d}.jpg")
+#     test_data.show(i,f"Pulses/pulse_{i:03d}.jpg")
 # exit()
 
 os.system("rm Plots/*.png")
 os.system("rm loss.csv")
 os.system("rm loss.png")
+os.system("rm Kernels/*.pt")
 
 epoch = 0
 img_count = 0
-loss_track = {"epoch": [], "loss": [], "train_correct": [],"test_correct": []}
+loss_track = [] # {"epoch": [], "loss": [], "train_correct": [],"test_correct": []}
 es = time.time()
 
 #grab random first kernels
-plot_kernels(f"Plots/conv_{img_count:05d}.png")
+plot_kernels(f"Plots/conv_{img_count:05d}.png",img_count)
 img_count += 1
 
 while True:
@@ -235,33 +240,34 @@ while True:
         out = ann(data)
         test_correct += count_correct(out,target)
 
-    
-    loss_track["epoch"].append(epoch)
-    loss_track["loss"].append(loss_total)
-    loss_track["train_correct"].append(train_correct)
-    loss_track["test_correct"].append(test_correct)
+    loss_track.append({"epoch": epoch, "loss_total": loss_total, "train_correct": train_correct, "test_correct": test_correct, "dt": datetime.now()}) 
     
     if epoch % 1 == 0:
         ee = time.time()
-        print(f"epoch={epoch},loss={loss_total}, train_correct={train_correct}, test_correct={test_correct}, time={ee-es} sec")
+        print(f"epoch={epoch},loss={loss_total}, train_correct={train_correct}, test_correct={test_correct}, time={ee-es} sec, {datetime.now()}")
         es = ee
 
-        plot_kernels(f"Plots/conv_{img_count:05d}.png")
+        plot_kernels(f"Plots/conv_{img_count:05d}.png",img_count)
         img_count += 1
     
+        x = [lt['epoch'] for lt in loss_track]
+
         plt.subplot(3,1,1)
-        plt.plot(loss_track['epoch'],loss_track['loss'])
+        y = [lt['loss_total'] for lt in loss_track]
+        plt.plot(x,y)
         plt.ylabel("Loss")
         plt.xticks([])
         plt.title("Convolutional Network Training")
 
         plt.subplot(3,1,2)
-        plt.plot(loss_track['epoch'],loss_track['train_correct'])
+        y = [lt['train_correct'] for lt in loss_track]
+        plt.plot(x,y)
         plt.xticks([])
         plt.ylabel("Train Correct")
 
         plt.subplot(3,1,3)
-        plt.plot(loss_track['epoch'],loss_track['test_correct'])
+        y = [lt['test_correct'] for lt in loss_track]
+        plt.plot(x,y)
         plt.ylabel("Test Correct")
         plt.xlabel("Epoch")
         plt.xticks()
@@ -270,9 +276,9 @@ while True:
         plt.close()
 
         with open("loss.csv","w") as f:
-            f.write("epoch,loss\n")
-            for (epoch,loss) in zip(loss_track['epoch'],loss_track['loss']):
-                f.write(f"{epoch},{loss}\n")
+            f.write("epoch,loss,train_correct,test_correct\n")
+            for lt in loss_track:
+                f.write(f"{lt['epoch']},{lt['loss_total']},{lt['train_correct']},{lt['test_correct']}\n")
 
     epoch += 1
 
