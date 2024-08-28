@@ -11,6 +11,7 @@ import os
 import torch.nn.functional as F
 import time
 from datetime import datetime
+import glob
 
 #https://discuss.pytorch.org/t/error-while-running-cnn-for-grayscale-image/598/2
 class neural_net(nn.Module):
@@ -26,7 +27,7 @@ class neural_net(nn.Module):
         self.act = nn.Tanh()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.01)
-        self.fc1 = nn.Linear(31*31, 4096) 
+        self.fc1 = nn.Linear(221*301, 4096) 
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
 
@@ -71,35 +72,29 @@ class neural_net(nn.Module):
 
 class CustomData(Dataset):
     def __init__(self, json_file):
-        with open(json_file,"r") as f:
-            self.pairs = json.load(f)
+        self.input = []
+        self.output = []
+
+        files = glob.glob("Data/image*.png")
+        for file in files:
+            img = plt.imread(file)
+            img_tensor = torch.tensor(img)[:,:,1]
+            #add the channel_count dimension since conv2d wants [channel_count H W]
+            img_tensor = img_tensor.unsqueeze(0)
+            self.input.append(img_tensor)
+            #print(img_tensor.shape)
+            out = "Data/output_" + file.split("_")[1].replace("png","dat")
+            with open(out,"r") as f:
+                self.output.append(torch.tensor(json.load(f)))
 
     def __len__(self):
-        return len(self.pairs)
+        return len(self.input)
 
     def __getitem__(self, idx):
-        input = self.pairs[idx][0]
-        target = self.pairs[idx][1]
-
-        ip = torch.tensor(input).view(100,100)
-
-        #add the channel_count dimension since conv2d wants [channel_count H W]
-        ip = ip.unsqueeze(0)
-
-        t = torch.tensor(target)
-        #t = F.normalize(t,dim=0)
-       
-        return ip, t
+        return self.input[idx], self.output[idx]
 
     def len(self):
-        return len(self.pairs)
-
-    def show(self,idx,file):
-        p = np.array(self.pairs[idx][0])
-        p1 = p.reshape(100,100)
-        plt.imshow(p1)
-        plt.savefig(file,dpi=300)
-        plt.close()
+        return len(self.input)
         
 
 def find_speed():
