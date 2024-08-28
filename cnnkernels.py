@@ -1,3 +1,6 @@
+#!/usr/bin/env -S python3 -u 
+
+
 import torch
 from torch import optim
 import torch.nn as nn
@@ -12,6 +15,7 @@ import torch.nn.functional as F
 import time
 from datetime import datetime
 import glob
+from torch.nn.functional import normalize
 
 #https://discuss.pytorch.org/t/error-while-running-cnn-for-grayscale-image/598/2
 class neural_net(nn.Module):
@@ -27,7 +31,7 @@ class neural_net(nn.Module):
         self.act = nn.Tanh()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.01)
-        self.fc1 = nn.Linear(221*301, 4096) 
+        self.fc1 = nn.Linear(57*83, 4096) 
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
 
@@ -71,31 +75,31 @@ class neural_net(nn.Module):
 
 
 class CustomData(Dataset):
-    def __init__(self, json_file):
-        self.input = []
-        self.output = []
-
-        files = glob.glob("Data/image*.png")
-        for file in files:
-            img = plt.imread(file)
-            img_tensor = torch.tensor(img)[:,:,1]
-            #add the channel_count dimension since conv2d wants [channel_count H W]
-            img_tensor = img_tensor.unsqueeze(0)
-            self.input.append(img_tensor)
-            #print(img_tensor.shape)
-            out = "Data/output_" + file.split("_")[1].replace("png","dat")
-            with open(out,"r") as f:
-                self.output.append(torch.tensor(json.load(f)))
+    def __init__(self, dir):
+        files = glob.glob(f"{dir}/image*.jpg")
+        self.data_len = len(files)
+        self.dir = dir
+        print(f"{self.data_len} data pairs in {dir}")
 
     def __len__(self):
-        return len(self.input)
+        return self.data_len
 
     def __getitem__(self, idx):
-        return self.input[idx], self.output[idx]
+        input_file = f"{self.dir}/image_{idx:05d}.jpg"
+        img = plt.imread(input_file)
+        img_tensor = torch.tensor(img,dtype=torch.float32)
+    
+        #add the channel_count dimension since conv2d wants [channel_count H W]
+        input = img_tensor.unsqueeze(0)
+       
+        output_file = f"{self.dir}/output_{idx:05d}.dat"
+        with open(output_file,"r") as f:
+                target = torch.tensor(json.load(f))
+
+        return input,target
 
     def len(self):
-        return len(self.input)
-        
+        return self.data_len        
 
 def find_speed():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -181,10 +185,8 @@ loss_fn = nn.L1Loss()
 #loss_fn = nn.NLLLoss()
 
 #https://stackoverflow.com/questions/41924453/pytorch-how-to-use-dataloaders-for-custom-datasets
-
-size = 100
-train = CustomData("pairs.json")
-test_data = CustomData("test_pairs.json")
+train = CustomData("Data")
+test_data = CustomData("TestData")
 batch_size = int(train.len()/10)
 
 train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
