@@ -42,30 +42,31 @@ for i in range(0,N):
     A,x0,sd,width,offset,f,B,tw = get_params()
     n = random.randint(0,3)
     fig = plt.figure()
-    fig.set_dpi(32)
+    fig.set_dpi(32) #32: 204x153
     fig.set_facecolor("k")
     plt.xlim([-250,250])
     plt.ylim([-250,250])
     plt.axis('off')
+    line_width = 10
     
     if n == 0:
-        plt.plot(x,A*np.exp(-((x-x0)**2)/(2*math.pi*sd**2))+offset,'w')
+        plt.plot(x,A*np.exp(-((x-x0)**2)/(2*math.pi*sd**2))+offset,'w',lw=line_width)
         output = [0,0,1]
         stats['gauss'] += 1
     if n == 1:
-        plt.plot([-WIDTH/2,x0],[offset,offset],'w')
-        plt.plot([x0,x0],[offset,offset+A],'w')
-        plt.plot([x0,x0+width],[offset+A,offset+A],'w')
-        plt.plot([x0+width,x0+width],[offset+A,offset],'w')
-        plt.plot([x0+width,WIDTH/2],[offset,offset],'w')
+        plt.plot([-WIDTH/2,x0],[offset,offset],'w',lw=line_width)
+        plt.plot([x0,x0],[offset,offset+A],'w',lw=line_width)
+        plt.plot([x0,x0+width],[offset+A,offset+A],'w',lw=line_width)
+        plt.plot([x0+width,x0+width],[offset+A,offset],'w',lw=line_width)
+        plt.plot([x0+width,WIDTH/2],[offset,offset],'w',lw=line_width)
         output = [0,1,0]
         stats['square'] += 1
     if n == 2:
-        plt.plot(x,A/2*np.sin(f*x)+offset,'w')
+        plt.plot(x,A/2*np.sin(f*x)+offset,'w',lw=line_width)
         output = [1,0,0]
         stats['sin'] += 1
     if n == 3:
-        plt.plot(x,1*(x % tw)+offset,'w')
+        plt.plot(x,1*(x % tw)+offset,'w',lw=line_width)
         output = [1,1,0]
         stats['triangle'] += 1
 
@@ -73,7 +74,7 @@ for i in range(0,N):
     #plt.show()
     fig.canvas.draw()
     data = np.frombuffer(fig.canvas.tostring_rgb(),dtype=np.uint8)
-    resize = fig.canvas.get_width_height()[::-1] + (3,) # (H,W,3)
+    resize = fig.canvas.get_width_height()[::-1] + (3,) # returns (H,W,3)
     #print(resize)
  
     data = data.reshape(resize)

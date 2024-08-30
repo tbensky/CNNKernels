@@ -22,7 +22,7 @@ class neural_net(nn.Module):
     def __init__(self):
         super(neural_net, self).__init__()
         self.conv_layer_count = 5
-        self.K = 20
+        self.K = 10
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=self.conv_layer_count, kernel_size=self.K, stride=1, padding=0)
         self.relu = nn.ReLU()
@@ -31,7 +31,7 @@ class neural_net(nn.Module):
         self.act = nn.Tanh()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.01)
-        self.fc1 = nn.Linear(57*83, 4096) 
+        self.fc1 = nn.Linear(67*93, 4096) 
         self.fc2 = nn.Linear(4096, 1024)
         self.fc3 = nn.Linear(1024, 3)
 
@@ -172,7 +172,7 @@ ann.to(device)
 
 #25Jul: conv_layers=10, lr=0.05, momentum=0.0 was converging. No great patters in kernels though.
 
-optimizer = optim.SGD(ann.parameters(),lr=0.05) #momentum=0.1)
+optimizer = optim.SGD(ann.parameters(),lr=0.01) #momentum=0.1)
 
 
 #CrossEntropyLoss reveals curved sections
